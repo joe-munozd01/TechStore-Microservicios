@@ -1,0 +1,6 @@
+com\example\msproducto\DTO\CategoriaDTO.class
+com\example\msproducto\DTO\InventarioDTO.class
+com\example\msproducto\MsProductoApplication.class
+com\example\msproducto\controller\CategoriaController.class
+com\example\msproducto\DTO\MarcaDTO.class
+com\example\msproducto\DTO\ProductoDTO.class

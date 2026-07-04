@@ -1,0 +1,137 @@
+spring:
+  application:
+    name: techstore-gateway
+
+  cloud:
+    gateway:
+
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      routes:
+
+        # ---- ms-usuario (8081): Usuario ----
+        - id: usuarios_route
+          uri: lb://ms-usuario
+          predicates:
+            - Path=/api/v1/usuarios/**, /ms-usuario/api-docs/**
+          filters:
+            - StripPrefix=0
+
+        # ---- ms-producto (8082): Producto, Categoria, Marca, Inventario ----
+        - id: productos_route
+          uri: lb://ms-producto
+          predicates:
+            - Path=/api/v1/productos/**
+          filters:
+            - StripPrefix=0
+
+        - id: categorias_route
+          uri: lb://ms-producto
+          predicates:
+            - Path=/api/v1/categorias/**
+          filters:
+            - StripPrefix=0
+
+        - id: marcas_route
+          uri: lb://ms-producto
+          predicates:
+            - Path=/api/v1/marcas/**
+          filters:
+            - StripPrefix=0
+
+        - id: inventarios_route
+          uri: lb://ms-producto
+          predicates:
+            - Path=/api/v1/inventarios/**, /ms-producto/api-docs/**
+          filters:
+            - StripPrefix=0
+
+        # ---- ms-orden (8083): Carrito, CarritoDetalle, Orden, DetalleOrden ----
+        - id: carritos_route
+          uri: lb://ms-orden
+          predicates:
+            - Path=/api/v1/carritos/**
+          filters:
+            - StripPrefix=0
+
+        - id: carrito_detalles_route
+          uri: lb://ms-orden
+          predicates:
+            - Path=/api/v1/carrito-detalle/**
+          filters:
+            - StripPrefix=0
+
+        - id: ordenes_route
+          uri: lb://ms-orden
+          predicates:
+            - Path=/api/v1/ordenes/**
+          filters:
+            - StripPrefix=0
+
+        - id: detalle_ordenes_route
+          uri: lb://ms-orden
+          predicates:
+            - Path=/api/v1/detalle-orden/**, /ms-orden/api-docs/**
+          filters:
+            - StripPrefix=0
+
+        # ---- ms-pago (8084): Pago, Envio ----
+        - id: pagos_route
+          uri: lb://ms-pago
+          predicates:
+            - Path=/api/v1/pagos/**
+          filters:
+            - StripPrefix=0
+
+        - id: envios_route
+          uri: lb://ms-pago
+          predicates:
+            - Path=/api/v1/envios/**, /ms-pago/api-docs/**
+          filters:
+            - StripPrefix=0
+
+        - id: swagger_ui_route
+          uri: lb://ms-usuario
+          predicates:
+            - Path=/swagger-ui/**
+          filters:
+            - StripPrefix=0
+
+        - id: swagger_api_docs_route
+          uri: lb://ms-usuario
+          predicates:
+            - Path=/v3/api-docs/**
+          filters:
+            - StripPrefix=0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+server:
+  port: 8090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, gateway
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.netflix.eureka: WARN
+    com.netflix.discovery: WARN
+    org.springframework.cloud.gateway: INFO
