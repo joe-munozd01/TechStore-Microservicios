@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.msorden.DTO.OrdenDTO;
+import com.example.msorden.client.UsuarioClient;
 import com.example.msorden.model.Orden;
 import com.example.msorden.repository.OrdenRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,9 @@ public class OrdenService {
 
     @Autowired
     private OrdenRepository ordenRepository;
+
+    @Autowired
+    private UsuarioClient usuarioClient;
 
     public List<OrdenDTO> obtenerTodas() {
         log.info("Buscando todas las ordenes en la base de datos");
@@ -61,18 +65,26 @@ public class OrdenService {
     }
 
     public Orden guardar(Orden orden) {
-        log.info("Guardando un nuevo orden...");
+        log.info("Verificando en red si el usuario ID: {} existe en ms-usuario...", orden.getIdUsuario());
+        
+        try {
+            usuarioClient.obtenerUsuarioPorId(orden.getIdUsuario());
+            log.info("Usuario validado correctamente desde ms-usuario. Procediendo a crear la orden.");
+        } catch (Exception e) {
+            log.error("ERROR: El usuario ID {} no existe o ms-usuario esta caido. Detalle: {}", orden.getIdUsuario(), e.getMessage());
+            throw new RuntimeException("No se puede crear la orden: El usuario no existe en los registros de TechStore");
+        }
+
+        log.info("Guardando la nueva orden");
         return ordenRepository.save(orden);
+
     }
 
     private OrdenDTO convertirADTO(Orden orden) {
-
         OrdenDTO dto = new OrdenDTO();
-
         dto.setId(orden.getId());
         dto.setTotal(orden.getTotal());
         dto.setIdUsuario(orden.getIdUsuario());
-
         return dto;
     }
 }

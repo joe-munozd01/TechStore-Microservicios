@@ -1,0 +1,181 @@
+version: '3.8'
+
+services:
+  mariadb-db:
+    image: mariadb:10.11
+    container_name: mariadb-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: db_imperio_jedis_dev
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - network-techstore-microservicio
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  eureka-server:
+    build: ./techstore-eureka
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - network-techstore-microservicio
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api-gateway:
+    build: ./techstore-gateway
+    container_name: api-gateway
+    ports:
+      - "8090:8090"
+    environment:
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_PROFILES_ACTIVE: dev
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  usuario-service:
+    build: ./ms_usuario
+    container_name: usuario-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://api-gateway:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  producto-service:
+    build: ./ms_producto
+    container_name: producto-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://api-gateway:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  orden-service:
+    build: ./ms_orden
+    container_name: orden-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://api-gateway:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  pago-service:
+    build: ./ms_pago
+    container_name: pago-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://api-gateway:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  despacho-service:
+    build: ./ms_despacho
+    container_name: despacho-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://localhost:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  notificacion-service:
+    build: ./ms_notificacion
+    container_name: notificacion-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://localhost:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  resena-service:
+    build: ./ms_resena
+    container_name: resena-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://localhost:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  soporte-service:
+    build: ./ms_soporte
+    container_name: soporte-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DATABASE_HOST: mariadb-db
+      GATEWAY_URL: http://localhost:8090
+    networks:
+      - network-techstore-microservicio
+    depends_on:
+      mariadb-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+networks:
+  network-techstore-microservicio:
+    driver: bridge

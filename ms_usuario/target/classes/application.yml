@@ -4,8 +4,17 @@ server:
 spring:
   application:
     name: ms-usuario
-  profiles:
-    active: dev
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/ms_usuario_db
+    username: root
+    password: ''
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 springdoc:
   api-docs:
@@ -20,32 +29,5 @@ eureka:
   instance:
     prefer-ip-address: true
 
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-  datasource:
-    url: jdbc:mysql://localhost:3306/ms_usuario_db?createDatabaseIfNotExist=true
-    username: root
-    password: ''
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
 
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    url: jdbc:mysql://localhost:3306/ms_usuario_db_prod?createDatabaseIfNotExist=true
-    username: root
-    password: ''
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
+

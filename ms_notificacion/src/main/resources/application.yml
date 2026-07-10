@@ -1,0 +1,30 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: ms-notificacion
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/techstore_notificacion_db
+    username: root
+    password: ''
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+springdoc:
+  api-docs:
+    path: /ms-notificacion/api-docs
+  swagger-ui:
+    path: /swagger-ui/index.html
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

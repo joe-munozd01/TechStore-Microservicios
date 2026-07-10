@@ -1,5 +1,3 @@
-#!/bin/bash
-# Levanta todo el ecosistema de TechStore en orden: eureka -> microservicios -> gateway
 set -e
 
 echo "Iniciando techstore-eureka (8761)..."
@@ -15,6 +13,14 @@ echo "Iniciando ms_orden (8083)..."
 echo "Iniciando ms_pago (8084)..."
 (cd ms_pago && ./mvnw spring-boot:run) &
 sleep 20
+echo "Iniciando ms_despacho (8089)..."
+(cd ms_despacho && .mvnw spring-boot:run) &
+echo "Iniciando ms_resena (8086)..."
+(cd ms_resena && .mvnw spring-boot:run) &
+echo "Iniciando ms_notificacion (8087)..."
+(cd ms_notificacion && .mvnw spring-boot:run) &
+echo "Iniciando ms_soporte (8088)..."
+(cd ms_soporte && .mvnw spring-boot:run) &
 
 echo "Iniciando techstore-gateway (8090)..."
 (cd techstore-gateway && ./mvnw spring-boot:run) &
