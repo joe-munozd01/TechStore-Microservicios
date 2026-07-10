@@ -1,45 +1,29 @@
 # TechStore - Backend en Microservicios
 
-Proyecto final para la asignatura **Desarrollo FullStack 1** (Duoc UC).
+Proyecto final para la asignatura Desarrollo FullStack 1 (Duoc UC). 
+Este proyecto consiste en la migración de un sistema monolítico a una arquitectura moderna orientada a microservicios, asegurando alta disponibilidad, escalabilidad y un despliegue automatizado.
 
-**Integrantes:**
-- José Muñoz
-- Felipe Baez
+### Integrantes
+* Lalo Muñoz
+* Felipe Baez
 
-## Resumen
-Este repositorio contiene el backend de nuestra tienda (TechStore). Pasamos el proyecto de una arquitectura monolítica a microservicios independientes usando Spring Boot y Spring Cloud.
+### Arquitectura del Sistema
+El ecosistema está compuesto por 10 contenedores orquestados que interactúan entre sí de forma transparente:
 
-## Tecnologías
-- Java 21
-- Spring Boot
-- Maven
-- MySQL 8 (vía Laragon/XAMPP)
-- Lombok (v1.18.32)
+* API Gateway (Puerto 8090): Punto único de entrada, balanceo de carga y enrutamiento dinámico.
+* Eureka Server (Puerto 8761): Service Discovery para el registro y localización de los microservicios.
+* 8 Microservicios de Negocio: ms_usuario, ms_producto, ms_orden, ms_pago, ms_despacho, ms_notificacion, ms_resena y ms_soporte.
+* Persistencia Aislada: Un servidor MariaDB que inicializa bases de datos independientes para cada microservicio, garantizando el desacoplamiento de datos.
 
-## Arquitectura y Puertos
-El sistema levanta varios servidores en paralelo. Esta es la distribución:
+### Stack Tecnológico
+* Backend: Java 21 y Spring Boot 3.
+* Spring Cloud: Gateway, Netflix Eureka y OpenFeign (para la comunicación síncrona entre microservicios).
+* Base de Datos: Spring Data JPA y MariaDB.
+* Testing: Pruebas unitarias con JUnit 5 y Mockito (asegurando más del 80% de cobertura).
+* Despliegue: Docker y Docker Compose para la contenerización y orquestación local.
 
-- **Eureka (Service Registry):** `localhost:8761` (Monitor donde se registran los servicios)
-- **API Gateway:** `localhost:8090` (Puerta de entrada principal)
-- **MS Usuarios:** `localhost:8081`
-- **MS Productos:** `localhost:8082`
-- **MS Órdenes:** `localhost:8083`
-- **MS Pagos:** `localhost:8084`
+### Despliegue Rápido
+Para levantar toda la infraestructura, asegúrese de tener el motor de Docker en ejecución y corra el siguiente comando en la raíz del proyecto:
 
-## Instrucciones para ejecutar (Local)
-
-Para no tener que levantar cada microservicio a mano, dejamos un script que automatiza el arranque.
-
-1. Enciende tu motor de base de datos MySQL (Laragon o XAMPP) en el puerto `3306`. (Credenciales por defecto: usuario `root`, sin contraseña).
-2. Asegúrate de tener creada la base de datos `techstore_db`.
-3. Haz doble clic en el archivo `iniciar-todo.bat`. (Si revisas desde Mac/Linux, usa la terminal y corre `./iniciar-todo.sh`).
-4. Se abrirán varias consolas. Espera unos segundos a que compilen.
-5. Abre tu navegador y entra a `http://localhost:8761`. Cuando veas que todos los servicios aparecen en verde con el texto **UP**, el backend está completamente operativo.
-
-## Probar las APIs (Swagger)
-Como el proyecto está dividido, cada microservicio tiene su propia documentación y panel de pruebas. Una vez que el sistema esté levantado, puedes probar los endpoints (GET, POST, etc.) en estos enlaces:
-
-- **Usuarios:** http://localhost:8081/swagger-ui/index.html
-- **Productos:** http://localhost:8082/swagger-ui/index.html
-- **Órdenes:** http://localhost:8083/swagger-ui/index.html
-- **Pagos:** http://localhost:8084/swagger-ui/index.html
+```bash
+docker-compose up --build -d
