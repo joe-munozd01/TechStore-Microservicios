@@ -4,7 +4,7 @@ Proyecto final para la asignatura Desarrollo FullStack 1 (Duoc UC).
 Este proyecto consiste en la migración de un sistema monolítico a una arquitectura moderna orientada a microservicios, asegurando alta disponibilidad, escalabilidad y un despliegue automatizado.
 
 ### Integrantes
-* Lalo Muñoz
+* José Muñoz
 * Felipe Baez
 
 ### Arquitectura del Sistema
