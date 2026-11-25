@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   mariadb-db:
@@ -11,7 +10,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: db_imperio_jedis_dev
     volumes:
-      - ./init-db:/docker-entrypoint-initdb.d
+      - ./init-db:/docker-entrypoint-initdb.d:z
     networks:
       - network-techstore-microservicio
     healthcheck:
