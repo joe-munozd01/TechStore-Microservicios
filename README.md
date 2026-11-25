@@ -54,6 +54,12 @@ El token se envía en la cabecera `Authorization: Bearer <token>`. El secreto se
 ### CORS
 El gateway acepta peticiones del frontend en `http://localhost:3000`.
 
+### Notas para Linux (Fedora)
+* En versiones nuevas de Docker el comando es `docker compose` (con espacio) en vez de `docker-compose`.
+* El volumen `./init-db` lleva `:z` en `docker-compose.yml` para que SELinux permita a MariaDB leer el script de las bases de datos.
+* Si un servicio no aparece en el gateway (error 503), esperar 1-2 minutos a que se registre en Eureka (http://localhost:8761).
+* Para borrar todo y partir de cero (incluye la base de datos): `docker compose down -v`.
+
 ### Documentación Swagger
 Con todo levantado: http://localhost:8090/swagger-ui/index.html (selector arriba a la derecha para ver cada microservicio).
 
