@@ -6,11 +6,14 @@ import org.springframework.stereotype.Service;
 import com.example.msusuario.DTO.UsuarioDTO;
 import com.example.msusuario.model.Usuario;
 import com.example.msusuario.repository.UsuarioRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class UsuarioService {
+
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -42,8 +45,9 @@ public class UsuarioService {
                 });
         if (datosActualizados.getNombre() != null) usuario.setNombre(datosActualizados.getNombre());
         if (datosActualizados.getCorreo() != null) usuario.setCorreo(datosActualizados.getCorreo());
+        if (datosActualizados.getRol() != null) usuario.setRol(datosActualizados.getRol());
         if (datosActualizados.getPassword() != null && !datosActualizados.getPassword().isBlank()) {
-            usuario.setPassword(datosActualizados.getPassword());
+            usuario.setPassword(ENCODER.encode(datosActualizados.getPassword()));
         }
 
         log.info("Usuario ID: {} Actualizado exitosamente", id);
@@ -64,6 +68,9 @@ public class UsuarioService {
 
     public Usuario guardar(Usuario usuario) {
         log.info("Guardando un nuevo usuario...");
+        if (usuario.getPassword() != null && !usuario.getPassword().startsWith("$2")) {
+            usuario.setPassword(ENCODER.encode(usuario.getPassword()));
+        }
         return usuarioRepository.save(usuario);
     }
 
@@ -74,6 +81,7 @@ public class UsuarioService {
         dto.setId(usuario.getId());
         dto.setNombre(usuario.getNombre());
         dto.setCorreo(usuario.getCorreo());
+        dto.setRol(usuario.getRol());
 
         return dto;
     }

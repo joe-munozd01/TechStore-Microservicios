@@ -1,5 +1,6 @@
 package com.example.msusuario.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,6 +44,11 @@ public class Usuario {
     private String correo;
 
     @NotBlank(message = "La contraseña es obligatoria")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
+
+    /** Rol del usuario: "ADMIN" o "CLIENTE". Se incluye en el JWT. */
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'CLIENTE'")
+    private String rol = "CLIENTE";
 }

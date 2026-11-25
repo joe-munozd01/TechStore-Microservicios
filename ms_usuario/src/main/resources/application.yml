@@ -6,7 +6,7 @@ spring:
     name: ms-usuario
   
   datasource:
-    url: jdbc:mysql://localhost:3306/ms_usuario_db
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:3306/ms_usuario_db?createDatabaseIfNotExist=true
     username: root
     password: ''
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -16,11 +16,24 @@ spring:
       ddl-auto: update
     show-sql: true
 
+jwt:
+  secret: ${JWT_SECRET:techstore-secreto-super-largo-para-jwt-dsy1104-2026}
+  expiracion-minutos: 120
+
 springdoc:
   api-docs:
     path: /ms-usuario/api-docs
   swagger-ui:
     path: /swagger-ui/index.html
+    urls:
+      - {name: Usuarios y Auth, url: /ms-usuario/api-docs}
+      - {name: Productos, url: /ms-producto/api-docs}
+      - {name: Ordenes, url: /ms-orden/api-docs}
+      - {name: Pagos, url: /ms-pago/api-docs}
+      - {name: Resenas, url: /ms-resena/api-docs}
+      - {name: Soporte, url: /ms-soporte/api-docs}
+      - {name: Despacho, url: /ms-despacho/api-docs}
+      - {name: Notificaciones, url: /ms-notificacion/api-docs}
 
 eureka:
   client:
