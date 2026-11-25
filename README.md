@@ -27,3 +27,37 @@ Para levantar toda la infraestructura, asegúrese de tener el motor de Docker en
 
 ```bash
 docker-compose up --build -d
+
+
+---
+
+## Evaluación Parcial 3 - Integración con el frontend (DSY1104 Fullstack II)
+Integrantes: Nicolás Figueroa, José Muñoz.
+
+### Autenticación con JWT y roles
+* `POST /api/v1/auth/login` → `{ correo, password }` → devuelve `{ token, usuario: { id, nombre, correo, rol } }`.
+* `POST /api/v1/auth/registro` → `{ nombre, correo, password }` → crea un usuario con rol **CLIENTE** y devuelve su token.
+* Las contraseñas se guardan cifradas con **BCrypt** (las antiguas en texto plano se migran solas al primer login).
+* Al iniciar `ms_usuario` se crean las cuentas de prueba si no existen:
+  * `admin@techstore.cl` / `Admin123` (rol ADMIN)
+  * `cliente@techstore.cl` / `Cliente123` (rol CLIENTE)
+
+### Control de acceso en el API Gateway (`JwtAuthFilter`)
+| Ruta | Acceso |
+|---|---|
+| `/api/v1/auth/**`, Swagger, `GET` de productos/categorías/marcas/reseñas | Público |
+| `/api/v1/usuarios/**` y `POST/PUT/DELETE` de productos, categorías, marcas, inventario | Solo **ADMIN** (si no: 403) |
+| Todo lo demás (órdenes, pagos, despachos, etc.) | Cualquier usuario con token válido (si no: 401) |
+
+El token se envía en la cabecera `Authorization: Bearer <token>`. El secreto se configura con la variable `JWT_SECRET` (tiene un valor por defecto para desarrollo, el mismo en gateway y ms_usuario).
+
+### CORS
+El gateway acepta peticiones del frontend en `http://localhost:3000`.
+
+### Documentación Swagger
+Con todo levantado: http://localhost:8090/swagger-ui/index.html (selector arriba a la derecha para ver cada microservicio).
+
+### Levantar en local sin Docker
+**Linux (Fedora):** tener MariaDB corriendo en el puerto 3306 con usuario `root` sin contraseña, y luego `./iniciar-todo.sh`.
+**Windows:** lo mismo con `iniciar-todo.bat`.
+Las bases de datos se crean solas (`createDatabaseIfNotExist=true`).
